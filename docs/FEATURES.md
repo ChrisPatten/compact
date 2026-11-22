@@ -8,6 +8,7 @@ Detailed notes moved from the README: Pomodoro, Capture (recording), Screenshot 
 - [Capture (recording)](#capture-recording)
 - [Screenshot](#screenshot)
 - [Commands (`main/commands.c`)](#commands-maincommandsc)
+- [Now-face widgets](#now-face-widgets)
 
 ## Pomodoro
 
@@ -104,3 +105,7 @@ One registry of named device ops, reachable over any transport. A new feature is
 - Handlers must not block long, touch the panel (only through the `display.h` API) or restart directly (`compact_restart`). Pure parts (JSON escape,
   dedupe, TTL, result frame) are `main/cmd_logic.c`, host tested: `cc -O1 -g -std=c11 -Wall -Wextra -fsanitize=address,undefined -fno-sanitize-recover=all -Imain test/host/cmd_logic_test.c main/cmd_logic.c -o /tmp/cmd_logic_test && /tmp/cmd_logic_test`.
 - RAM: queue about 1 KB and the task control block internal; stack, two 1.5 KB buffers and the dedupe frames in PSRAM.
+
+## Now-face widgets
+
+The Now face reads fixed ids from the bus `widgets` resource: `leave_by` and `weather` (arcs) and `sports` (crown). `sports` is `{"text": "CELTICS 7:30 PM", "valid_until": ISO8601}`: while valid it replaces the crown line (BUSY UNTIL / date); text is uppercased and cut with "..." at 300 px. Debug: `POST /debug/ui` `sports <text>` sets it, `sports` alone clears it, `gauge clear` clears everything.

@@ -105,6 +105,10 @@ static void needs_you_fill(const now_ctx_t *c, comp_out_t *o)
     o->col = COL_PERI;
 }
 static const comp_t needs_you  = { "needs_you",  K_CURVED, false, needs_you_vis,  needs_you_fill };
+/* sports: text from the `sports` widget (a score line), first choice of the crown while it is valid */
+static bool sports_vis(const now_ctx_t *c);
+static void sports_fill(const now_ctx_t *c, comp_out_t *o);
+static const comp_t sports     = { "sports",     K_CURVED, false, sports_vis,     sports_fill };
 static const comp_t busy_until = { "busy_until", K_CURVED, false, busy_until_vis, busy_until_fill };
 static const comp_t date       = { "date",       K_CURVED, false, always,         date_fill };
 
@@ -228,6 +232,8 @@ typedef struct { bool ok; time_t to, span; char label[24]; time_t valid_until; }
 typedef struct { bool ok, has_now; char date[11]; int low, high, now; char cond[16]; time_t valid_until; } weather_data_t;
 static leave_data_t s_leave;
 static weather_data_t s_wx;
+typedef struct { bool ok; char text[40]; time_t valid_until; } sports_data_t;
+static sports_data_t s_sports;
 static int s_morning_override = -1;     /* testing: 1 = it is morning, 0 = it is not, -1 = by the clock */
 
 static time_t json_time(const cJSON *d, const char *key)
@@ -277,6 +283,28 @@ static void parse_weather(const cJSON *d)
     s_wx.ok = true;
 }
 
+static void parse_sports(const cJSON *d)
+{
+    memset(&s_sports, 0, sizeof s_sports);
+    if (!cJSON_IsObject(d)) return;
+    const cJSON *t = cJSON_GetObjectItem(d, "text");
+    if (!cJSON_IsString(t)) return;
+    dial_caps(s_sports.text, sizeof s_sports.text, t->valuestring);
+    if (!s_sports.text[0]) return;
+    s_sports.valid_until = json_time(d, "valid_until");
+    s_sports.ok = true;
+}
+
+static bool sports_vis(const now_ctx_t *c)
+{
+    return s_sports.ok && (!s_sports.valid_until || c->now < s_sports.valid_until);
+}
+static void sports_fill(const now_ctx_t *c, comp_out_t *o)
+{
+    (void)c;
+    snprintf(o->text, sizeof o->text, "%s", s_sports.text);
+}
+
 static const cJSON *widget_data(const cJSON *widgets, const char *id)
 {
     return cJSON_GetObjectItem(cJSON_GetObjectItem(widgets, id), "data");
@@ -287,7 +315,8 @@ void now_gauges_set(const cJSON *widgets)
 {
     parse_leave(widget_data(widgets, "leave_by"));
     parse_weather(widget_data(widgets, "weather"));
-    ESP_LOGI("now", "gauges: leave_by %s, weather %s", s_leave.ok ? "yes" : "no", s_wx.ok ? "yes" : "no");
+    parse_sports(widget_data(widgets, "sports"));
+    ESP_LOGI("now", "gauges: leave_by %s, weather %s, sports %s", s_leave.ok ? "yes" : "no", s_wx.ok ? "yes" : "no", s_sports.ok ? "yes" : "no");
 }
 
 static bool leave_by_vis(const now_ctx_t *c)
@@ -414,7 +443,7 @@ static void gauge_draw(lv_layer_t *l, const slot_t *s, const gauge_t *v)
 
 /* ---- the table ---- */
 
-static const comp_t *const CROWN[] = { &busy_until, &needs_you, &date, NULL };
+static const comp_t *const CROWN[] = { &sports, &busy_until, &needs_you, &date, NULL };
 static const comp_t *const HEAD[]  = { &upper_label, &next_time, &free_now, NULL };
 static const comp_t *const PAIR[]  = { &clock_c, &countdown, NULL };
 static const comp_t *const FOOT[]  = { &link_state, &agent_status, &phone_link, &lower_label, &left_today, NULL };
@@ -584,7 +613,7 @@ void now_gauge_debug(const char *a, char *out, size_t n)
     char w[12] = {0}, cond[16] = {0};
     int x = 0, y = 0, z = 0;
     a += strspn(a, " ");                                       /* the caller passes the text after "gauge", leading space included */
-    if (sscanf(a, "%11s", w) < 1) { snprintf(out, n, "gauge: leave|weather|json|morning|step|clear\n"); return; }
+    if (sscanf(a, "%11s", w) < 1) { snprintf(out, n, "gauge: leave|weather|sports|json|morning|step|clear\n"); return; }
     const char *rest = a + strlen(w);
     if (!strcmp(w, "leave") && sscanf(rest, "%d", &x) == 1) {
         time_t t = dial_now() + (time_t)x * 60; struct tm g; gmtime_r(&t, &g);
@@ -598,6 +627,14 @@ void now_gauge_debug(const char *a, char *out, size_t n)
                                l.tm_year + 1900, l.tm_mon + 1, l.tm_mday, x, y, z, cond);
         cJSON *d = cJSON_Parse(js); parse_weather(d); cJSON_Delete(d);
         snprintf(out, n, "weather %d to %d, now %d (%s)\n", x, y, z, s_wx.ok ? "set" : "bad");
+    } else if (!strcmp(w, "sports")) {
+        const char *p = rest + strspn(rest, " ");
+        if (!*p) { memset(&s_sports, 0, sizeof s_sports); snprintf(out, n, "sports cleared\n"); }
+        else {
+            cJSON *d = cJSON_CreateObject(); cJSON_AddStringToObject(d, "text", p);
+            parse_sports(d); cJSON_Delete(d);
+            snprintf(out, n, "sports %s\n", s_sports.ok ? "set" : "bad");
+        }
     } else if (!strcmp(w, "weather")) {
         memset(&s_wx, 0, sizeof s_wx); snprintf(out, n, "weather cleared\n");
     } else if (!strcmp(w, "json")) {
@@ -613,9 +650,9 @@ void now_gauge_debug(const char *a, char *out, size_t n)
     } else if (!strcmp(w, "step")) {
         now_lower_step(); snprintf(out, n, "stepped\n");
     } else if (!strcmp(w, "clear")) {
-        memset(&s_leave, 0, sizeof s_leave); memset(&s_wx, 0, sizeof s_wx); s_morning_override = -1;
+        memset(&s_leave, 0, sizeof s_leave); memset(&s_wx, 0, sizeof s_wx); memset(&s_sports, 0, sizeof s_sports); s_morning_override = -1;
         s_lower_steps = 0; snprintf(out, n, "cleared\n");
-    } else snprintf(out, n, "gauge: leave <min> | weather <lo> <hi> <now> [COND] | json {..} | morning on|off|auto | step | clear\n");
+    } else snprintf(out, n, "gauge: leave <min> | weather <lo> <hi> <now> [COND] | sports [text] | json {..} | morning on|off|auto | step | clear\n");
 }
 
 bool now_lower_tick(void)
