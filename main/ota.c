@@ -232,7 +232,7 @@ static esp_err_t debug_ui_post(httpd_req_t *req)
     char body[200] = {0}, what[16] = {0};
     int dy = 0;
     if (httpd_req_recv(req, body, sizeof body - 1) <= 0 || sscanf(body, "%15s %d", what, &dy) < 1)
-        return httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "body: thread | now | agents | day | settings | restart | night on|off|auto | gauge ... | clock HH:MM [+d] | clock off | testday rel|abs|detail|free|off | widgets {..} | gap <min> | scroll <dy> | agents-test <n> | agents-scroll <dy> | settings-scroll <dy> | day-scroll <dy> | swipe up|down | detail | tone <hz> | chime | ptt <ms> | capture[-tone] <s> | capture-ui <s> | capture-offline <s> | ble-start | mem-hog <kb> | hang <ms> | hammer <s> [nolock] | wd on|off|status | screenshot | cue plum|amber|rose|off [phase] [count] [quiet] | cue tune ... | cue bench | notice-test | notice-open | earlier-test [off] | earlier-row <n> | earlier-clear | reply on|off|status | reply test choices|voice|both|inform|late|done|expired|off");
+        return httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "body: thread | now | agents | day | settings | restart | night on|off|auto | gauge ... | sports [text] | clock HH:MM [+d] | clock off | testday rel|abs|detail|free|off | widgets {..} | gap <min> | scroll <dy> | agents-test <n> | agents-scroll <dy> | settings-scroll <dy> | day-scroll <dy> | swipe up|down | detail | tone <hz> | chime | ptt <ms> | capture[-tone] <s> | capture-ui <s> | capture-offline <s> | ble-start | mem-hog <kb> | hang <ms> | hammer <s> [nolock] | wd on|off|status | screenshot | cue plum|amber|rose|off [phase] [count] [quiet] | cue tune ... | cue bench | notice-test | notice-open | earlier-test [off] | earlier-row <n> | earlier-clear | reply on|off|status | reply test choices|voice|both|inform|late|done|expired|off");
     if (!strcmp(what, "swipe")) {                              /* "swipe up|down": the router's vertical branch, no touch */
         char dir[8] = {0};
         sscanf(body, "%*s %7s", dir);
@@ -267,6 +267,10 @@ static esp_err_t debug_ui_post(httpd_req_t *req)
     if (!strcmp(what, "restart")) {                            /* "restart": the quiesced restart path, as the power menu */
         compact_restart("debug");
         return httpd_resp_sendstr(req, "ok, restarting\n");
+    }
+    if (!strcmp(what, "sports")) {                             /* "sports <text>" sets the crown line, "sports" clears it */
+        char r[96]; dial_gauge_debug(body, r, sizeof r);
+        return httpd_resp_sendstr(req, r);
     }
     if (!strcmp(what, "ptt")) {                                /* "ptt <ms>": a BOOT hold of <ms>, then PWR-cancel (nothing sent) */
         int ms = dy > 0 && dy < 20000 ? dy : 2000;
