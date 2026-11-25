@@ -1,0 +1,42 @@
+menu "Intercom"
+    comment "Non-empty values are written to NVS on boot; empty values keep what NVS holds."
+    config INTERCOM_WIFI_SSID
+        string "Wi-Fi SSID (2.4 GHz)"
+        default ""
+    config INTERCOM_WIFI_PASSWORD
+        string "Wi-Fi password"
+        default ""
+    config INTERCOM_WIFI2_SSID
+        string "Secondary Wi-Fi SSID (optional, e.g. a phone hotspot)"
+        default ""
+    config INTERCOM_WIFI2_PASSWORD
+        string "Secondary Wi-Fi password"
+        default ""
+    config INTERCOM_TOKEN
+        string "Surface token"
+        default ""
+    config INTERCOM_BUS_HOST
+        string "AgentBus mDNS host name (without .local)"
+        default "agentbus"
+    config INTERCOM_BUS_FALLBACK_IP
+        string "AgentBus IP if mDNS lookup fails"
+        default ""
+    config INTERCOM_BUS_PORT
+        int "AgentBus HTTP port"
+        default 3000
+    config INTERCOM_HOSTNAME
+        string "This device's mDNS name"
+        default "compact"
+
+    config INTERCOM_LATITUDE_MILLIDEG
+        int "Latitude in thousandths of a degree (sunrise and sunset)"
+        default 42360
+        help
+          Used only to compute sunrise and sunset for the night ground and the Day list.
+          The default is Boston. Set your own, for example 40713 for 40.713 N.
+
+    config INTERCOM_LONGITUDE_MILLIDEG
+        int "Longitude in thousandths of a degree (sunrise and sunset), west is negative"
+        default -71058
+
+endmenu

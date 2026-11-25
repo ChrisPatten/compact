@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Compact Relay</title>
+<style>
+  :root { --glass:#2a1f30; --raise:#3a2a41; --line:#6b5575; --ink:#f8ece8; --ink2:#cdb5c6; --rose:#f5a99b; --ok:#9fd8b0; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--glass); color:var(--ink); font:16px/1.4 -apple-system, system-ui, sans-serif;
+         padding: max(16px, env(safe-area-inset-top)) 16px 24px; }
+  h1 { font-size:20px; font-weight:600; margin:4px 0 2px; letter-spacing:.02em; }
+  .sub { color:var(--ink2); font-size:13px; margin-bottom:16px; }
+  .card { background:var(--raise); border:1px solid var(--line); border-radius:16px; padding:14px 16px; margin-bottom:12px; }
+  .row { display:flex; justify-content:space-between; align-items:center; padding:4px 0; }
+  .k { color:var(--ink2); font-size:13px; letter-spacing:.06em; text-transform:uppercase; }
+  .v { font-weight:600; }
+  .v.ok { color:var(--ok); } .v.bad { color:var(--rose); }
+  button { width:100%; border:0; border-radius:999px; padding:14px; font:600 16px system-ui; margin-top:8px;
+           background:var(--rose); color:#2a1f30; }
+  button.ghost { background:transparent; color:var(--ink); border:1px solid var(--line); }
+  button:disabled { opacity:.4; }
+  #log { font:12px/1.45 ui-monospace, Menlo, monospace; color:var(--ink2); white-space:pre-wrap; word-break:break-word;
+         max-height:40vh; overflow:auto; }
+</style>
+</head>
+<body>
+<h1>Compact Relay</h1>
+<div class="sub">Passes the Intercom socket between the bus and the Compact over Bluetooth (text frames only: no audio here). Keep this page open with the screen on.</div>
+
+<div class="card">
+  <div class="row"><span class="k">Compact</span><span class="v bad" id="ble">not connected</span></div>
+  <div class="row"><span class="k">Bus</span><span class="v bad" id="bus">closed</span></div>
+  <div class="row"><span class="k">To Compact</span><span class="v" id="down">0 frames</span></div>
+  <div class="row"><span class="k">From Compact</span><span class="v" id="up">0 frames</span></div>
+  <div class="row"><span class="k">Dropped audio</span><span class="v" id="drop">0</span></div>
+  <button id="go">Connect to the Compact</button>
+  <button id="stop" class="ghost" disabled>Disconnect</button>
+  <button id="wifi" class="ghost" disabled>Send the Compact back to Wi-Fi</button>
+</div>
+
+<div class="card"><div class="k" style="margin-bottom:6px">Log</div><div id="log"></div></div>
+
+<script>
+const NUS = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
+const RX  = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';   // phone -> Compact (write)
+const TX  = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';   // Compact -> phone (notify)
+const F_FIRST = 1, F_LAST = 2, F_BINARY = 4;          // phone link v2 framing (docs/phone-link-v2.md)
+const CHUNK = 180;                                    // bytes per write, flags byte included (fits a 185 MTU)
+const BUS = `wss://${location.host}/api/v1/intercom/ws`;
+
+const $ = id => document.getElementById(id);
+const enc = new TextEncoder(), dec = new TextDecoder();
+let dev = null, rx = null, ws = null, wantRun = false, wakeLock = null, standby = false;
+let nDown = 0, nUp = 0, bDown = 0, bUp = 0, nDrop = 0;
+let asm = [], inFrame = false;
+let writeChain = Promise.resolve();
+
+function log(s) {
+  const t = new Date().toLocaleTimeString([], { hour12: false });
+  const el = $('log'); el.textContent = `${t} ${s}\n` + el.textContent.slice(0, 6000);
+}
+function setv(id, text, ok) { const e = $(id); e.textContent = text; e.className = 'v ' + (ok === undefined ? '' : ok ? 'ok' : 'bad'); }
+function counts() {
+  setv('down', `${nDown} frames, ${(bDown / 1024).toFixed(1)} KB`);
+  setv('up', `${nUp} frames, ${(bUp / 1024).toFixed(1)} KB`);
+  setv('drop', String(nDrop));
+}
+function typeOf(text) { try { return JSON.parse(text).type || '?'; } catch { return 'unparseable'; } }
+
+// ---- to the Compact: [flags][bytes] chunks, one write at a time ----
+function toCompact(text) {
+  if (!rx) return;
+  const b = enc.encode(text), room = CHUNK - 1;
+  const chunks = [];
+  for (let off = 0; off < b.length || off === 0; off += room) {
+    const n = Math.min(room, b.length - off);
+    const c = new Uint8Array(n + 1);
+    c[0] = (off === 0 ? F_FIRST : 0) | (off + n >= b.length ? F_LAST : 0);
+    c.set(b.subarray(off, off + n), 1);
+    chunks.push(c);
+    if (b.length === 0) break;
+  }
+  writeChain = writeChain.then(async () => {
+    for (const c of chunks) {
+      if (!rx) return;
+      await (rx.writeValueWithResponse ? rx.writeValueWithResponse(c) : rx.writeValue(c));
+    }
+    nDown++; bDown += b.length; counts();
+  }).catch(e => log(`write failed: ${e.message || e}`));
+  return writeChain;
+}
+
+// ---- from the Compact ----
+function onNotify(ev) {
+  const v = new Uint8Array(ev.target.value.buffer.slice(ev.target.value.byteOffset, ev.target.value.byteOffset + ev.target.value.byteLength));
+  if (!v.length) return;
+  const fl = v[0];
+  if (fl & F_BINARY) { nDrop++; counts(); return; }         // mic audio (ADPCM): this page carries text only
+  if (fl & ~(F_FIRST | F_LAST)) return;                      // unknown flags: drop the chunk
+  if (fl & F_FIRST) { asm = []; inFrame = true; }
+  else if (!inFrame) return;
+  asm.push(v.subarray(1));
+  if (!(fl & F_LAST)) return;
+  inFrame = false;
+  const total = asm.reduce((a, c) => a + c.length, 0), all = new Uint8Array(total);
+  let o = 0; for (const c of asm) { all.set(c, o); o += c.length; }
+  asm = [];
+  const text = dec.decode(all), type = typeOf(text);
+  nUp++; bUp += total; counts();
+  if (type === 'relay_ping') return;                         // keeps a native relay awake; nothing for the bus
+  if (type === 'relay_reconnect') { log('Compact asked for a fresh start: reopening the bus'); if (ws) ws.close(); return; }
+  if (type === 'relay_standby') { enterStandby(); return; }
+  if (type !== 'state') log(`Compact -> bus: ${type}`);     // never log contents: hello carries the token
+  if (ws && ws.readyState === WebSocket.OPEN) ws.send(text);
+  else log(`bus not open: ${type} not sent`);
+}
+
+// ---- the bus ----
+// Wi-Fi is back on the Compact: close the bus socket and wait. The Compact disconnects and stops advertising; the
+// reconnect loop in onGone relinks when it advertises again.
+function enterStandby() {
+  standby = true;
+  log('Compact is on Wi-Fi: standing by');
+  setv('bus', 'standby', undefined);
+  if (ws) { const w = ws; ws = null; w.onclose = null; w.close(); }
+}
+
+function openBus() {
+  if (!wantRun || !rx || standby) return;
+  setv('bus', 'connecting', false);
+  ws = new WebSocket(BUS);
+  ws.binaryType = 'arraybuffer';
+  ws.onopen = () => { setv('bus', 'open', true); log('bus open'); toCompact(JSON.stringify({ type: 'relay_open', now: Date.now() })); };
+  ws.onmessage = m => {
+    if (typeof m.data !== 'string') { nDrop++; counts(); return; }   // spoken-reply audio: not carried over Bluetooth
+    const type = typeOf(m.data);
+    if (type !== 'delta' || m.data.length > 2000) log(`bus -> Compact: ${type} (${m.data.length} bytes)`);
+    toCompact(m.data);
+  };
+  ws.onclose = e => {
+    setv('bus', 'closed', false);
+    log(`bus closed (${e.code})`);
+    ws = null;
+    if (rx && !standby) toCompact(JSON.stringify({ type: 'relay_closed' }));
+    if (wantRun && rx && !standby) setTimeout(openBus, 3000);
+  };
+  ws.onerror = () => log('bus error');
+}
+
+// ---- Bluetooth ----
+async function attach() {
+  setv('ble', 'connecting', false);
+  const server = await dev.gatt.connect();
+  const svc = await server.getPrimaryService(NUS);
+  rx = await svc.getCharacteristic(RX);
+  const tx = await svc.getCharacteristic(TX);
+  tx.addEventListener('characteristicvaluechanged', onNotify);
+  await tx.startNotifications();
+  setv('ble', dev.name || 'connected', true);
+  log(`Compact connected (${dev.name || 'unnamed'})`);
+  standby = false;
+  openBus();
+}
+
+function onGone() {
+  const wasLinked = rx !== null;
+  rx = null; inFrame = false; asm = [];
+  setv('ble', standby ? 'Standby (Compact on Wi-Fi)' : 'not connected', standby ? undefined : false);
+  if (wasLinked) log('Compact disconnected');
+  if (ws) { const w = ws; ws = null; w.onclose = null; w.close(); setv('bus', 'closed', false); }
+  // keep trying; in standby the Compact advertises again only when its Wi-Fi link drops, so try less often
+  if (wantRun) setTimeout(() => attach().catch(e => { if (!standby) log(`reconnect failed: ${e.message || e}`); onGone(); }),
+                          standby ? 10000 : 3000);
+}
+
+async function keepAwake() {
+  // Bluefy's own extension: stop the screen dimming and auto-locking while the relay runs
+  try {
+    if (navigator.bluetooth && typeof navigator.bluetooth.setScreenDimEnabled === 'function') {
+      await navigator.bluetooth.setScreenDimEnabled(false);
+      log('screen dimming off (Bluefy)');
+    }
+  } catch (e) { log(`setScreenDimEnabled failed: ${e.message || e}`); }
+  try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+}
+
+// Coming back to the foreground: reconnect at once instead of waiting out the retry timers
+function resume() {
+  if (!wantRun) return;
+  keepAwake();
+  if (!rx && dev) { log('foreground: reconnecting to the Compact'); attach().catch(e => { log(`reconnect failed: ${e.message || e}`); onGone(); }); }
+  else if (rx && !ws && !standby) { log('foreground: reopening the bus'); openBus(); }
+}
+
+// Bluefy reports background changes on navigator.bluetooth; log what it sends so we learn its shape
+if (navigator.bluetooth && typeof navigator.bluetooth.addEventListener === 'function') {
+  navigator.bluetooth.addEventListener('backgroundstatechanged', e => {
+    const info = {};
+    for (const k in e) { const v = e[k]; if (['string', 'boolean', 'number'].includes(typeof v)) info[k] = v; }
+    log(`backgroundstatechanged ${JSON.stringify(info)}`);
+    const bg = e.isInBackground ?? e.inBackground ?? e.background ?? e.detail?.background;
+    if (bg === false) resume();
+  });
+}
+
+$('go').onclick = async () => {
+  if (!navigator.bluetooth) { log('No Web Bluetooth here. Open this page in Bluefy.'); return; }
+  try {
+    dev = await navigator.bluetooth.requestDevice({ filters: [{ services: [NUS] }], optionalServices: [NUS] });
+    dev.addEventListener('gattserverdisconnected', onGone);
+    wantRun = true;
+    $('go').disabled = true; $('stop').disabled = false; $('wifi').disabled = false;
+    keepAwake();
+    await attach();
+  } catch (e) {
+    log(`connect failed: ${e.message || e}`);
+    $('go').disabled = false;
+  }
+};
+
+$('wifi').onclick = () => {
+  if (!rx) return;
+  log('asking the Compact to restart on Wi-Fi');
+  toCompact(JSON.stringify({ type: 'relay_restart' }));
+  $('stop').onclick();
+};
+
+$('stop').onclick = () => {
+  wantRun = false; standby = false;
+  try { if (navigator.bluetooth && navigator.bluetooth.setScreenDimEnabled) navigator.bluetooth.setScreenDimEnabled(true); } catch (e) {}
+  $('go').disabled = false; $('stop').disabled = true; $('wifi').disabled = true;
+  if (ws) ws.close();
+  if (dev && dev.gatt.connected) dev.gatt.disconnect();
+  if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
+};
+
+document.addEventListener('visibilitychange', () => { log(`page ${document.visibilityState}`); if (document.visibilityState === 'visible') resume(); });
+log(navigator.bluetooth ? 'Ready. Tap Connect.' : 'No Web Bluetooth in this browser. Open this page in Bluefy.');
+</script>
+</body>
+</html>

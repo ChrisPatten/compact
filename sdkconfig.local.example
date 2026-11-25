@@ -1,0 +1,14 @@
+# Non-empty values are written to the device's NVS on boot. Once a board has them,
+# they can be left empty for later (OTA) builds.
+CONFIG_INTERCOM_WIFI_SSID="your-2.4ghz-ssid"
+CONFIG_INTERCOM_WIFI_PASSWORD="your-password"
+# Optional secondary network (phone hotspot). Leave empty to use none, or set it at runtime
+# with scripts/wifi2.sh (a non-empty value here overwrites what NVS holds on every boot).
+CONFIG_INTERCOM_WIFI2_SSID="your-hotspot-ssid"
+CONFIG_INTERCOM_WIFI2_PASSWORD="your-hotspot-password"
+CONFIG_INTERCOM_TOKEN="surface-token"
+CONFIG_INTERCOM_BUS_HOST="agentbus"
+CONFIG_INTERCOM_BUS_FALLBACK_IP=""
+# Location for sunrise and sunset (thousandths of a degree; west is negative). Default is Boston.
+CONFIG_INTERCOM_LATITUDE_MILLIDEG=42360
+CONFIG_INTERCOM_LONGITUDE_MILLIDEG=-71058

@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en" data-motion="on">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Compact: a round desk display for your AI assistant</title>
+<meta name="description" content="The Compact is a 1.75-inch round AMOLED desk display that shows your day on a 12-hour rim, asks for your decisions with up to three buttons, and listens while you hold a key.">
+<meta name="theme-color" content="#0d0810">
+<meta name="color-scheme" content="dark">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Compact: a round desk display for your AI assistant">
+<meta property="og:description" content="Your day on a 12-hour rim, your assistant's questions with up to three buttons, and push-to-talk on one key.">
+<link rel="icon" href="img/icon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/hanken-grotesk.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="img/now.webp" as="image" type="image/webp">
+<link rel="stylesheet" href="css/site.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="top">
+  <div class="wrap nav__bar">
+    <a class="brand" href="#top" aria-label="The Compact, back to top">
+      <svg class="brand__mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="0.1 9.1" stroke-linecap="round"/><circle cx="12.6" cy="20.3" r="5" fill="#F8ECE8"/><circle cx="21" cy="11" r="2.6" fill="#F5A99B"/></svg>
+      <span>The Compact</span>
+    </a>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-links"><span class="sr">Menu</span><span class="nav__burger" aria-hidden="true"></span></button>
+    <nav class="nav__links" id="nav-links" aria-label="Sections">
+      <a href="#now">Now face</a>
+      <a href="#day">A day</a>
+      <a href="#faces">Faces</a>
+      <a href="#alerts">Alerts</a>
+      <a href="#voice">Voice</a>
+      <a href="#focus">Focus timer</a>
+      <a href="#power">Power</a>
+      <a href="#inside">Inside</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-h">
+  <div class="wrap hero__grid">
+    <div class="hero__copy" data-enter>
+      <p class="kicker">1.75-inch round AMOLED · 466 × 466</p>
+      <h1 id="hero-h">A round desk display for your AI assistant</h1>
+      <p class="lede">The Compact shows your day on a 12-hour rim, puts your assistant's questions in front of you with up to three buttons, and listens while you hold a key.</p>
+      <div class="actions">
+        <a class="btn btn--primary" href="#day">See a day with it</a>
+        <a class="btn" href="#inside">Read the specs</a>
+      </div>
+    </div>
+    <div class="hero__visual" data-enter>
+      <svg class="rim rim--hero" viewBox="0 0 1000 1000" aria-hidden="true" data-rim data-time="10:12"></svg>
+      <div class="device device--hero">
+        <picture><source srcset="img/now.webp" type="image/webp"><img src="img/now.png" width="466" height="466" alt="The Compact's Now face at 10:12 AM on Friday 27 November: NEXT 10:30, 18 minutes to go, 7 left today, with Design sync named along the bottom and the day's appointments as dots and arcs around the rim." fetchpriority="high"></picture>
+      </div>
+      <button class="motion-toggle" type="button" aria-pressed="false" data-motion-toggle>Pause animation</button>
+    </div>
+  </div>
+</section>
+
+<!-- NOW FACE -->
+<section class="section" id="now" aria-labelledby="now-h">
+  <div class="wrap anatomy">
+    <div class="anatomy__copy">
+      <h2 id="now-h">The Now face at a glance</h2>
+      <p class="section__lede">Now is home: the time, the next appointment and the minutes until it, with the rest of the day around the edge.</p>
+      <ol class="anatomy__list">
+        <li><h3>The rim is a clock</h3><p>A fixed 12-hour face. Moments sit on it as dots and arcs for the next 11 hours.</p></li>
+        <li><h3>Now, with a second hand</h3><p>The bright dot is the present; a small moon circles it once a minute.</p></li>
+        <li><h3>Next and how long</h3><p>The heading names the next busy Moment and the numerals count down to it.</p></li>
+        <li><h3>Overlaps in amber</h3><p>A clashing Moment moves to an inner lane and turns amber.</p></li>
+        <li><h3>Free time left</h3><p>The upper arc fills as the gap before the next Moment runs out.</p></li>
+        <li><h3>The waking day</h3><p>The lower arc runs 6 AM to 11 PM. Before ten it shows the weather.</p></li>
+        <li><h3>The date, or busy until</h3><p>The date when you are clear; "busy until" while a Moment runs.</p></li>
+        <li><h3>Real daylight</h3><p>A shaded crescent follows the sun. After sunset the glass turns black.</p></li>
+      </ol>
+    </div>
+    <div class="anatomy__device">
+      <div class="device device--anatomy">
+        <picture><source srcset="img/now.webp" type="image/webp"><img src="img/now.png" width="466" height="466" loading="lazy" alt="The Now face with its parts numbered: rim, now dot, countdown, overlap lane, upper and lower arcs, date and daylight crescent."></picture>
+        <span class="pin" style="--x:8%;--y:68%" aria-hidden="true">1</span>
+        <span class="pin" style="--x:19%;--y:29%" aria-hidden="true">2</span>
+        <span class="pin" style="--x:33%;--y:60%" aria-hidden="true">3</span>
+        <span class="pin" style="--x:46%;--y:4.5%" aria-hidden="true">4</span>
+        <span class="pin" style="--x:80%;--y:36%" aria-hidden="true">5</span>
+        <span class="pin" style="--x:66.5%;--y:77.7%" aria-hidden="true">6</span>
+        <span class="pin" style="--x:50%;--y:17%" aria-hidden="true">7</span>
+        <span class="pin" style="--x:86%;--y:70%" aria-hidden="true">8</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- A DAY -->
+<section class="section day" id="day" aria-labelledby="day-h">
+  <div class="wrap">
+    <h2 id="day-h">A Friday on the Compact</h2>
+    <p class="section__lede">Six moments from one invented day, captured from the device itself.</p>
+    <div class="day__grid">
+      <div class="day__stage" aria-hidden="true">
+        <svg class="rim rim--stage" viewBox="0 0 1000 1000" data-rim data-time="8:41" data-stage-rim></svg>
+        <div class="device device--stage">
+          <img class="day__shot is-active" data-shot="morning" src="img/morning.webp" width="466" height="466" alt="" loading="lazy">
+          <img class="day__shot" data-shot="daylist" src="img/day.webp" width="466" height="466" alt="" loading="lazy">
+          <img class="day__shot" data-shot="decision" src="img/decision.webp" width="466" height="466" alt="" loading="lazy">
+          <img class="day__shot" data-shot="free" src="img/free.webp" width="466" height="466" alt="" loading="lazy">
+          <img class="day__shot" data-shot="urgent" src="img/urgent.webp" width="466" height="466" alt="" loading="lazy">
+          <img class="day__shot" data-shot="evening" src="img/evening.webp" width="466" height="466" alt="" loading="lazy">
+        </div>
+      </div>
+      <ol class="day__steps">
+        <li class="step" data-shot="morning" data-time="8:41">
+          <p class="step__time">8:41 AM</p>
+          <h3>Leave-by and the weather</h3>
+          <p>The upper arc turns amber and counts down to the time you have to leave. Until ten, the lower arc shows today's low, high and current temperature.</p>
+          <div class="device device--step"><picture><source srcset="img/morning.webp" type="image/webp"><img src="img/morning.png" width="466" height="466" loading="lazy" alt="8:41 AM: LEAVE 8:53 heading with an amber arc counting down 12 minutes, and the weather on the lower arc: 38 to 52 degrees, 41 now, partly cloudy."></picture></div>
+        </li>
+        <li class="step" data-shot="daylist" data-time="10:12">
+          <p class="step__time">10:12 AM</p>
+          <h3>The next meeting and its clash</h3>
+          <p>Swipe right for the rest of the day. Design sync is next, and the vendor call overlaps it by 15 minutes, flagged in amber.</p>
+          <div class="device device--step"><picture><source srcset="img/day.webp" type="image/webp"><img src="img/day.png" width="466" height="466" loading="lazy" alt="10:12 AM, the Day list: 10:30 Design sync with OVERLAPS 15 MIN in amber, 11:00 Vendor call, 45 MIN FREE, 12:30 Team lunch, 1:30 Focus block marked FREE."></picture></div>
+        </li>
+        <li class="step" data-shot="decision" data-time="10:16">
+          <p class="step__time">10:16 AM</p>
+          <h3>Your assistant needs an answer</h3>
+          <p>A decision takes the glass in periwinkle. The draft is quoted word for word, and nothing is sent until you review it and hold to confirm.</p>
+          <div class="device device--step"><picture><source srcset="img/decision.webp" type="image/webp"><img src="img/decision.png" width="466" height="466" loading="lazy" alt="A decision card: NEEDS YOU · ATLAS, Plumber can come Tuesday, the quoted draft reply 'Tuesday 9 to 11 works. See you then.', and REVIEW and LATER buttons."></picture></div>
+        </li>
+        <li class="step" data-shot="free" data-time="13:20">
+          <p class="step__time">1:20 PM</p>
+          <h3>Free time stays free</h3>
+          <p>The focus block is marked free. It sits on the rim as an outline and never counts as busy, so there is no countdown to it.</p>
+          <div class="device device--step"><picture><source srcset="img/free.webp" type="image/webp"><img src="img/free.png" width="466" height="466" loading="lazy" alt="1:20 PM: NEXT 1:30 · FREE with the clock centred, 4 left today, Focus block along the bottom."></picture></div>
+        </li>
+        <li class="step" data-shot="urgent" data-time="17:30">
+          <p class="step__time">5:30 PM</p>
+          <h3>The train is late</h3>
+          <p>Urgent news floods the glass rose and wakes the device, even in quiet hours. The old time is struck through and the buttons come from your assistant.</p>
+          <div class="device device--step"><picture><source srcset="img/urgent.webp" type="image/webp"><img src="img/urgent.png" width="466" height="466" loading="lazy" alt="An urgent alert on a rose background: TRAIN DELAYED, 5:42 struck through, 5:58 in large numerals, MISSES THE 6:15 BUS, and NEW ROUTE and DISMISS buttons."></picture></div>
+        </li>
+        <li class="step" data-shot="evening" data-time="19:04">
+          <p class="step__time">7:04 PM</p>
+          <h3>After sunset</h3>
+          <p>From sunset to sunrise the ground turns true black. One Moment is left: book club at 7:30.</p>
+          <div class="device device--step"><picture><source srcset="img/evening.webp" type="image/webp"><img src="img/evening.png" width="466" height="466" loading="lazy" alt="7:04 PM on a black ground: NEXT 7:30, 26 minutes, 1 left today, Book club along the bottom."></picture></div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- FACES -->
+<section class="section faces" id="faces" aria-labelledby="faces-h">
+  <div class="wrap">
+    <div class="faces__grid">
+      <div class="faces__stage">
+        <div class="device device--faces" data-faces tabindex="0" role="group" aria-roledescription="face explorer" aria-label="Face explorer. Use arrow keys or swipe to move between faces; Enter on Day opens a card.">
+          <div class="faces__track">
+            <img class="face is-active" data-face="now" src="img/now.webp" width="466" height="466" alt="Now face: the clock, the next Moment and the day around the rim.">
+            <img class="face" data-face="day" src="img/day.webp" width="466" height="466" loading="lazy" alt="Day face: a list of the day's Moments: 10:30 Design sync with an amber note OVERLAPS 15 MIN, 11:00 Vendor call, 45 MIN FREE, 12:30 Team lunch, 1:30 Focus block marked FREE, and Sunset 4:17 PM along the bottom.">
+            <img class="face" data-face="card" src="img/detail.webp" width="466" height="466" loading="lazy" alt="A Moment's card: IN 18 MIN, Design sync, 10:30 to 11:15 AM, 45 minutes, Studio 3 second floor, an amber overlap note, the note Bring the new enclosure samples, and ON MY WAY and I'M LATE buttons.">
+            <img class="face" data-face="agents" src="img/agents.webp" width="466" height="466" loading="lazy" alt="Agents face: the caption 1 waiting · 1 failed · 2 working above rows for Compact development and Trip booking, both working, and Weekly report, done.">
+            <img class="face" data-face="earlier" src="img/earlier.webp" width="466" height="466" loading="lazy" alt="Earlier tray: Package delivered, cleared; Dentist, withdrawn; Train delayed, withdrawn; two more; and a HOLD TO CLEAR button.">
+            <img class="face" data-face="settings" src="img/settings.webp" width="466" height="466" loading="lazy" alt="Settings: brightness and volume as arcs on the left and right of the rim, and rows for Sleep after 5 min, Quiet hours off, Rim gap 1:00 and Flashlight hold.">
+          </div>
+        </div>
+        <div class="facemap" role="group" aria-label="Face map">
+          <button type="button" class="facemap__btn" data-go="earlier" style="grid-area:up"><b>Earlier</b><span>swipe up</span></button>
+          <button type="button" class="facemap__btn" data-go="day" style="grid-area:left"><b>Day</b><span>swipe right</span></button>
+          <button type="button" class="facemap__btn is-active" data-go="now" aria-pressed="true" style="grid-area:mid"><b>Now</b><span>home</span></button>
+          <button type="button" class="facemap__btn" data-go="agents" style="grid-area:right"><b>Agents</b><span>swipe left</span></button>
+          <button type="button" class="facemap__btn" data-go="card" style="grid-area:card"><b>Card</b><span>tap a row</span></button>
+          <button type="button" class="facemap__btn" data-go="settings" style="grid-area:down"><b>Settings</b><span>swipe down</span></button>
+        </div>
+      </div>
+      <div class="faces__text">
+        <h2 id="faces-h">Four faces and two trays</h2>
+        <p class="section__lede">Swipe sideways between Day, Now, Agents and Thread. From Now, swipe up for Earlier and down for Settings. Try it here with a swipe, the arrow keys or the map.</p>
+        <div class="facedesc" aria-live="polite">
+          <div class="facedesc__item is-active" data-desc="now"><h3>Now</h3><p>Home. The clock, the next Moment with its countdown, and the day around the rim. A press of PWR always brings you back here.</p></div>
+          <div class="facedesc__item" data-desc="day"><h3>Day</h3><p>Every remaining Moment of today in a list that scrolls. Gaps of 30 minutes or more show as free time, and overlaps are flagged in amber.</p></div>
+          <div class="facedesc__item" data-desc="card"><h3>Card</h3><p>Tap a Moment for its card: the time, place, a note and up to three buttons from your assistant. Swipe sideways to step through the day, and down to close.</p></div>
+          <div class="facedesc__item" data-desc="agents"><h3>Agents</h3><p>What your assistant is working on, sorted waiting, failed, working, then done. Tap a job to read its conversation on the Thread face.</p></div>
+          <div class="facedesc__item" data-desc="earlier"><h3>Earlier</h3><p>Alerts and notices that ended or were set aside. Tap an open one to bring it back, or hold to clear the rest.</p></div>
+          <div class="facedesc__item" data-desc="settings"><h3>Settings</h3><p>Brightness and volume are the two arcs at the sides. The rows set the sleep timer, quiet hours, rim gap, flashlight, Wi-Fi network and link.</p></div>
+        </div>
+        <ul class="gestures">
+          <li><span class="g">Swipe left or right</span><span>Change face; inside a card, the next or previous Moment</span></li>
+          <li><span class="g">Swipe up on Now</span><span>Earlier, or the notice waiting for you</span></li>
+          <li><span class="g">Swipe down</span><span>Settings from Now; closes any card</span></li>
+          <li><span class="g">Tap</span><span>Open a row, a title or a button</span></li>
+          <li><span class="g">Hold 0.8 s</span><span>Confirm anything that sends or cannot be undone</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALERTS -->
+<section class="section alerts" id="alerts" aria-labelledby="alerts-h">
+  <div class="wrap">
+    <h2 id="alerts-h">Alerts in four weights</h2>
+    <p class="section__lede">Everything your assistant sends is a Moment with a weight. The weight decides whether it waits on the rim, breathes a ring, or takes the glass.</p>
+    <div class="alerts__grid">
+      <div class="breathe" data-breathe data-weight="notice">
+        <div class="device device--breathe">
+          <picture><source srcset="img/now.webp" type="image/webp"><img src="img/now.png" width="466" height="466" loading="lazy" alt="The Now face with a coloured ring breathing around its edge."></picture>
+          <img class="ring ring--notice" src="img/ring-plum.webp" width="466" height="466" alt="" loading="lazy">
+          <img class="ring ring--decision" src="img/ring-amber.webp" width="466" height="466" alt="" loading="lazy">
+          <img class="ring ring--urgent" src="img/ring-rose.webp" width="466" height="466" alt="" loading="lazy">
+        </div>
+        <div class="breathe__controls" role="group" aria-label="Ring colour">
+          <button type="button" data-w="notice" aria-pressed="true">Notice</button>
+          <button type="button" data-w="decision" aria-pressed="false">Decision</button>
+          <button type="button" data-w="urgent" aria-pressed="false">Urgent</button>
+        </div>
+      </div>
+      <ul class="weights">
+        <li><h3><span class="dot dot--rim" aria-hidden="true"></span>Ambient</h3><p>A mark on the rim and a row on Day. It never interrupts.</p></li>
+        <li><h3><span class="dot dot--plum" aria-hidden="true"></span>Notice</h3><p>A plum ring breathes slowly, once every 6 seconds, until you look. Swipe up on Now to read it. It never wakes the device.</p></li>
+        <li><h3><span class="dot dot--amber" aria-hidden="true"></span>Decision</h3><p>Takes the glass with your assistant's buttons and wakes the device, except in quiet hours. Set it aside and an amber ring breathes until you answer.</p></li>
+        <li><h3><span class="dot dot--rose" aria-hidden="true"></span>Urgent</h3><p>Floods the glass rose and always wakes it. The rim drains toward the deadline, one dot at a time.</p></li>
+      </ul>
+    </div>
+    <div class="takeovers">
+      <div class="takeover">
+        <div class="device device--small"><picture><source srcset="img/notice.webp" type="image/webp"><img src="img/notice.png" width="466" height="466" loading="lazy" alt="A notice card: a package icon, PACKAGE DELIVERED, FRONT PORCH · 10:25 AM, CLEARS IN 19 S and a GOT IT button, with a ring around the edge."></picture></div>
+        <h3>Notice</h3><p>Opens with a swipe up, clears itself after 20 seconds.</p>
+      </div>
+      <div class="takeover">
+        <div class="device device--small"><picture><source srcset="img/aside.webp" type="image/webp"><img src="img/aside.png" width="466" height="466" loading="lazy" alt="The Now face with an amber ring around the edge: a decision set aside, still waiting for an answer."></picture></div>
+        <h3>Decision, set aside</h3><p>Swipe it down and Now keeps an amber ring until you answer.</p>
+      </div>
+      <div class="takeover">
+        <div class="device device--small"><picture><source srcset="img/urgent.webp" type="image/webp"><img src="img/urgent.png" width="466" height="466" loading="lazy" alt="An urgent rose alert: TRAIN DELAYED, 5:42 struck through, 5:58, MISSES THE 6:15 BUS."></picture></div>
+        <h3>Urgent</h3><p>Wakes the device day or night, with what changed.</p>
+      </div>
+    </div>
+    <p class="note">Quiet hours run from 10 PM to 6:30 AM: notices stay silent, decisions wait for you to wake the device, and urgent alerts still get through.</p>
+  </div>
+</section>
+
+<!-- VOICE -->
+<section class="section voice" id="voice" aria-labelledby="voice-h">
+  <div class="wrap voice__grid">
+    <div class="voice__copy">
+      <h2 id="voice-h">Talk to your assistant with one key</h2>
+      <p class="section__lede">The Compact has two physical keys, BOOT and PWR, and two microphones. Speech goes to your assistant; replies can come back through the speaker.</p>
+      <dl class="keys">
+        <div><dt><kbd>BOOT</kbd> hold</dt><dd>Push-to-talk. Speak, then let go to send. A press of PWR while holding cancels it.</dd></div>
+        <div><dt><kbd>BOOT</kbd> double-press</dt><dd>Capture: record a meeting or a thought for up to two hours. Audio uploads in two-second pieces as you go, waits in flash if the network drops, and is sent for transcription.</dd></div>
+        <div><dt><kbd>BOOT</kbd> press</dt><dd>Opens Thread, the conversation with your assistant.</dd></div>
+        <div><dt><kbd>PWR</kbd> press</dt><dd>Back to Now from anywhere, or to sleep from Now. Hold for 3 seconds for the power menu.</dd></div>
+        <div><dt><kbd>BOOT</kbd> + <kbd>PWR</kbd></dt><dd>Takes a screenshot of the glass.</dd></div>
+      </dl>
+    </div>
+    <div class="voice__visual">
+      <div class="device device--voice"><picture><source srcset="img/capture.webp" type="image/webp"><img src="img/capture.png" width="466" height="466" loading="lazy" alt="Capture recording screen: a thick red ring, REC, a 00:02 timer and a HOLD TO STOP button on black."></picture></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOCUS -->
+<section class="section focus" id="focus" aria-labelledby="focus-h">
+  <div class="wrap">
+    <h2 id="focus-h">A focus timer that is the whole dial</h2>
+    <p class="section__lede">Ask your assistant to start a round. The ring drains for 25 minutes of focus and fills back up during a 5-minute break; after four rounds comes a 15-minute long break. The timer runs on the device, with or without Wi-Fi.</p>
+    <div class="focus__grid">
+      <div class="device device--focus"><picture><source srcset="img/pomodoro.webp" type="image/webp"><img src="img/pomodoro.png" width="466" height="466" loading="lazy" alt="Focus timer running: a thick peach ring, FOCUS, 24:51, and four round markers with the first in progress."></picture></div>
+      <div class="device device--focus"><picture><source srcset="img/pomodoro-paused.webp" type="image/webp"><img src="img/pomodoro-paused.png" width="466" height="466" loading="lazy" alt="Focus timer paused: a dimmed ring, PAUSED in amber, 24:50 in grey, TAP TO RESUME and HOLD TO CANCEL."></picture></div>
+      <ul class="focus__list">
+        <li><b>Tap</b> to pause or resume.</li>
+        <li><b>Swipe</b> to skip to the next phase.</li>
+        <li><b>Hold</b> 0.8 seconds to cancel.</li>
+        <li>The last minute brightens the ring; a soft chime marks each phase end, silent in quiet hours.</li>
+        <li>Durations are set when it starts, from 6 seconds to 99 minutes.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- POWER -->
+<section class="section power" id="power" aria-labelledby="power-h">
+  <div class="wrap power__grid">
+    <div class="power__copy">
+      <h2 id="power-h">Wi-Fi first, your phone as backup</h2>
+      <p class="section__lede">The Compact reaches your assistant over home Wi-Fi and can fall back to a second network, such as a phone hotspot. After 20 seconds without a link it starts Bluetooth and lets a relay app on your phone carry the connection until Wi-Fi returns.</p>
+      <svg class="linkdiagram" viewBox="0 0 560 230" role="img" aria-labelledby="ld-t">
+        <title id="ld-t">The Compact connects to the bus over Wi-Fi; if that fails, over Bluetooth to a phone relay, which connects to the bus.</title>
+        <g class="ld-node"><circle cx="70" cy="110" r="48"/><text x="70" y="114">Compact</text></g>
+        <g class="ld-node"><rect x="400" y="72" width="140" height="76" rx="38"/><text x="470" y="114">Bus</text></g>
+        <g class="ld-node ld-node--phone"><rect x="232" y="160" width="96" height="48" rx="24"/><text x="280" y="189">Phone</text></g>
+        <path class="ld-line ld-line--main" d="M122 98 C 220 70, 320 70, 398 100"/>
+        <path class="ld-line ld-line--alt" d="M116 130 C 160 170, 200 184, 230 184"/>
+        <path class="ld-line ld-line--alt" d="M330 184 C 380 184, 420 168, 448 150"/>
+        <text class="ld-label" x="260" y="62">Wi-Fi</text>
+        <text class="ld-label ld-label--alt" x="150" y="200">Bluetooth</text>
+        <text class="ld-label ld-label--alt" x="400" y="200">relay</text>
+      </svg>
+    </div>
+    <div class="power__visual">
+      <div class="device device--rest"><picture><source srcset="img/rest.webp" type="image/webp"><img src="img/rest.png" width="466" height="466" loading="lazy" alt="Rest face: 10:13 in amber on black with NEXT 10:30 · DESIGN S… beneath."></picture></div>
+      <ul class="power__list">
+        <li><b>500 mAh battery.</b> On battery it dims after 30 seconds, rests on a black clock after a minute, then sleeps after the time you choose.</li>
+        <li><b>Plugged in,</b> it never rests or sleeps on its own, and the charging screen estimates the time to full.</li>
+        <li><b>Any key wakes it;</b> a touch brightens a dimmed screen.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- INSIDE -->
+<section class="section inside" id="inside" aria-labelledby="inside-h">
+  <div class="wrap">
+    <h2 id="inside-h">Under the hood</h2>
+    <p class="section__lede">The Compact draws only what the bus sends it. Your assistant publishes Moments, notices and job status to the bus; taps, answers and voice go back the same way.</p>
+    <svg class="flow" viewBox="0 0 960 200" role="img" aria-labelledby="flow-t">
+      <title id="flow-t">Assistant publishes to the bus; the bus syncs to the Compact over a WebSocket; taps and voice return from the Compact to the bus and on to the assistant.</title>
+      <g class="fl-node"><circle cx="110" cy="100" r="78"/><text x="110" y="96">Compact</text><text class="fl-sub" x="110" y="120">draws, listens</text></g>
+      <g class="fl-node"><rect x="370" y="40" width="220" height="120" rx="60"/><text x="480" y="96">Bus</text><text class="fl-sub" x="480" y="120">AgentBus, at home</text></g>
+      <g class="fl-node"><rect x="740" y="40" width="200" height="120" rx="60"/><text x="840" y="96">Assistant</text><text class="fl-sub" x="840" y="120">your AI agents</text></g>
+      <path class="fl-line" id="fl-a" d="M736 82 L 594 82"/>
+      <path class="fl-line" id="fl-b" d="M366 82 L 192 82"/>
+      <path class="fl-line fl-line--back" id="fl-c" d="M192 118 L 366 118"/>
+      <path class="fl-line fl-line--back" id="fl-d" d="M594 118 L 736 118"/>
+      <circle class="pulse" r="4"><animateMotion dur="2.8s" repeatCount="indefinite"><mpath href="#fl-a"/></animateMotion></circle>
+      <circle class="pulse" r="4"><animateMotion dur="2.8s" begin="1.4s" repeatCount="indefinite"><mpath href="#fl-b"/></animateMotion></circle>
+      <circle class="pulse pulse--back" r="4"><animateMotion dur="3.2s" begin="0.6s" repeatCount="indefinite"><mpath href="#fl-c"/></animateMotion></circle>
+      <circle class="pulse pulse--back" r="4"><animateMotion dur="3.2s" begin="2.2s" repeatCount="indefinite"><mpath href="#fl-d"/></animateMotion></circle>
+      <text class="fl-label" x="665" y="70">Moments, notices</text>
+      <text class="fl-label" x="279" y="70">WebSocket sync</text>
+      <text class="fl-label" x="279" y="142">taps, voice</text>
+      <text class="fl-label" x="665" y="142">answers</text>
+    </svg>
+    <div class="inside__grid">
+      <dl class="specs">
+        <div><dt>Display</dt><dd>1.75-inch round AMOLED, 466 × 466, capacitive touch</dd></div>
+        <div><dt>Processor</dt><dd>ESP32-S3, dual core, 8 MB PSRAM</dd></div>
+        <div><dt>Audio</dt><dd>Two microphones and a speaker</dd></div>
+        <div><dt>Power</dt><dd>500 mAh battery, USB charging, AXP2101 power chip</dd></div>
+        <div><dt>Radios</dt><dd>2.4 GHz Wi-Fi with a second network for roaming, Bluetooth LE</dd></div>
+        <div><dt>Board</dt><dd>Waveshare ESP32-S3-Touch-AMOLED-1.75C</dd></div>
+        <div><dt>Firmware</dt><dd>C on ESP-IDF 5.5 with LVGL 9.5</dd></div>
+        <div><dt>Updates</dt><dd>Over Wi-Fi, with automatic rollback if the new version cannot reach the bus within 120 seconds</dd></div>
+      </dl>
+      <ul class="inside__notes">
+        <li>Recording, the focus timer and the clock run on the device, so they keep going without a connection.</li>
+        <li>A small set of commands (focus timer, wake and sleep, change face, chime, status) works over Wi-Fi or the phone link. Nothing that could strand the device, such as restarts, network changes or updates, can be sent that way.</li>
+        <li>Anything that sends a message for you needs a held press on the glass, and the device shows SENT only after the bus confirms it.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="closing">
+  <div class="wrap closing__grid">
+    <div>
+      <p class="closing__name">The Compact</p>
+      <p class="closing__line">Firmware and design for a personal desk device, in the Plum Dusk palette.</p>
+    </div>
+    <div class="closing__links">
+      <a href="#top">Back to top</a>
+    </div>
+  </div>
+  <div class="wrap closing__legal">
+    <p>© 2026 The Compact. Screens show an invented day. Type: Fraunces, Lexend Exa and Hanken Grotesk under the SIL Open Font License.</p>
+  </div>
+</footer>
+
+<script src="js/site.js" defer></script>
+</body>
+</html>

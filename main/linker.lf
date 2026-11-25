@@ -1,0 +1,10 @@
+# Zero-initialised statics of the app (dial, earlier, thread, power ... about 34 KB) live in PSRAM, not internal RAM
+# (RAM budget, Nov 19). Nothing here is touched by an IRAM interrupt or with the cache frozen: the BOOT GPIO interrupt
+# is not IRAM, and the panic handler writes only RTC memory. Initialised data (.data, including the spinlocks) stays
+# internal. Never add a static TCB (StaticTask_t) here: a TCB must be internal. That is why mDNS is not mapped (its
+# task TCB is a static; mapping it panicked at boot).
+[mapping:main_extram]
+archive: libmain.a
+entries:
+    if SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY = y:
+        * (extram_bss)

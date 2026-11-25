@@ -1,0 +1,6 @@
+# Heap-tracing debug build (not shipped): live internal allocations with callers at GET /debug/heap?trace.
+# idf.py -B build-trace -D SDKCONFIG=build-trace/sdkconfig -D INTERCOM_TRACE=1 build
+CONFIG_HEAP_TRACING_STANDALONE=y
+CONFIG_HEAP_TRACING_STACK_DEPTH=8
+CONFIG_HEAP_TRACE_HASH_MAP=y
+CONFIG_HEAP_TRACE_HASH_MAP_IN_EXT_RAM=y

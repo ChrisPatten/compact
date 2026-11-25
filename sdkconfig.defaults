@@ -1,0 +1,119 @@
+# This file was generated using idf.py save-defconfig. It can be edited manually.
+# Shared ESP-IDF v5.5/v6.0 project minimal configuration
+#
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHSIZE_32MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_FETCH_INSTRUCTIONS=y
+CONFIG_SPIRAM_RODATA=y
+CONFIG_SPIRAM_SPEED_80M=y
+CONFIG_SPIRAM_XIP_FROM_PSRAM=y
+CONFIG_ESP32S3_INSTRUCTION_CACHE_32KB=y
+CONFIG_ESP32S3_DATA_CACHE_32KB=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_ESP32S3_DATA_CACHE_LINE_64B=y
+
+CONFIG_FREERTOS_HZ=1000
+CONFIG_LV_USE_CLIB_STRING=y
+CONFIG_LV_USE_CLIB_SPRINTF=y
+CONFIG_LV_DEF_REFR_PERIOD=15
+CONFIG_LV_OS_FREERTOS=y
+CONFIG_LV_OBJ_STYLE_CACHE=y
+
+CONFIG_LV_DRAW_SW_DRAW_UNIT_CNT=2
+CONFIG_LV_ATTRIBUTE_FAST_MEM_USE_IRAM=n
+CONFIG_LV_FONT_MONTSERRAT_12=y
+CONFIG_LV_FONT_MONTSERRAT_16=y
+CONFIG_LV_FONT_MONTSERRAT_18=y
+CONFIG_LV_FONT_MONTSERRAT_20=y
+CONFIG_LV_FONT_MONTSERRAT_22=y
+CONFIG_LV_FONT_MONTSERRAT_24=y
+CONFIG_LV_FONT_MONTSERRAT_26=y
+CONFIG_LV_USE_FONT_COMPRESSED=y
+CONFIG_LV_TXT_BREAK_CHARS=" ,.;:-_"
+CONFIG_LV_USE_SYSMON=y
+CONFIG_LV_USE_PERF_MONITOR=y
+CONFIG_LV_USE_IMGFONT=y
+CONFIG_IDF_EXPERIMENTAL_FEATURES=y
+
+
+
+# Intercom: secrets live in sdkconfig.local (gitignored), loaded via SDKCONFIG_DEFAULTS
+CONFIG_ESP_WIFI_SOFTAP_SUPPORT=n
+
+# Keep internal DMA-capable RAM free for the display SPI: push Wi-Fi/lwip buffers to PSRAM
+CONFIG_SPIRAM_TRY_ALLOCATE_WIFI_LWIP=y
+
+# Internal RAM budget (Wi-Fi + internal LVGL draw buffers): keep hot code out of IRAM
+CONFIG_ESP_WIFI_IRAM_OPT=n
+CONFIG_ESP_WIFI_RX_IRAM_OPT=n
+CONFIG_LWIP_IRAM_OPTIMIZATION=n
+CONFIG_ESP_WIFI_STATIC_RX_BUFFER_NUM=8
+CONFIG_ESP_WIFI_DYNAMIC_RX_BUFFER_NUM=32
+
+# Fonts: Lexend Exa / Hanken Grotesk TTF subsets rendered by tiny_ttf
+CONFIG_LV_USE_TINY_TTF=y
+CONFIG_LV_TINY_TTF_CACHE_GLYPH_CNT=128
+# Small mallocs (glyph bitmaps, LVGL objects) go to PSRAM, keeping internal RAM for Wi-Fi and DMA
+CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL=2048
+
+# Over-the-air updates: two app slots, roll back if a new build never reaches the bus
+CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE=y
+CONFIG_HTTPD_MAX_REQ_HDR_LEN=1024
+
+# No LVGL perf/sysmon overlay (it sat in the square panel's hidden corner, peeking out at 5 o'clock)
+CONFIG_LV_USE_SYSMON=n
+CONFIG_LV_USE_PERF_MONITOR=n
+
+# Power management: auto light sleep while the Compact is asleep (power.c toggles it)
+CONFIG_PM_ENABLE=y
+CONFIG_FREERTOS_USE_TICKLESS_IDLE=y
+
+# LVGL allocates from PSRAM (main/lv_mem_psram.c); internal RAM is kept for Wi-Fi, DMA and stacks
+CONFIG_LV_USE_CUSTOM_MALLOC=y
+# per-font kerning-pair cache; running text has far more than 256 pairs
+CONFIG_LV_TINY_TTF_CACHE_KERNING_CNT=2048
+
+# TLS to a remote bus (wss://): every mbedtls allocation in PSRAM, not only the blocks over 2 KB
+CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC=y
+
+# Phone link (BLE, docs/phone-link-v2.md): NimBLE peripheral. AUTO starts it on the first Wi-Fi failover and keeps
+# it; PHONE starts it at boot. Bluetooth memory is no longer released at boot (that would rule out a later init).
+# Wi-Fi/BLE software coexistence (CONFIG_ESP_COEX_SW_COEXIST_ENABLE) is on by default with both enabled.
+CONFIG_BT_ENABLED=y
+CONFIG_BT_NIMBLE_ENABLED=y
+CONFIG_BT_NIMBLE_MEM_ALLOC_MODE_EXTERNAL=y
+CONFIG_BT_NIMBLE_MAX_CONNECTIONS=1
+CONFIG_BT_NIMBLE_ROLE_CENTRAL=n
+CONFIG_BT_NIMBLE_ROLE_OBSERVER=n
+CONFIG_BT_NIMBLE_ROLE_PERIPHERAL=y
+CONFIG_BT_NIMBLE_ROLE_BROADCASTER=y
+CONFIG_BT_NIMBLE_ATT_PREFERRED_MTU=512
+CONFIG_BT_NIMBLE_SVC_GAP_DEVICE_NAME="Compact"
+CONFIG_BT_NIMBLE_MSYS_1_BLOCK_COUNT=24
+# Controller code in flash (PSRAM XIP), not IRAM: keeps ~20 KB of internal RAM for Wi-Fi boots
+CONFIG_BT_CTRL_RUN_IN_FLASH_ONLY=y
+
+# Panic post-mortem without a cable: logbuf.c keeps its ring in no-init PSRAM (GET /log?prev after a reset)
+CONFIG_SPIRAM_ALLOW_NOINIT_SEG_EXTERNAL_MEMORY=y
+
+# Task list with stack bases for GET /debug/heap (uxTaskGetSystemState)
+CONFIG_FREERTOS_USE_TRACE_FACILITY=y
+# CPU per task for GET /debug/perf (esp_timer microseconds)
+CONFIG_FREERTOS_GENERATE_RUN_TIME_STATS=y
+
+# RAM budget (README "RAM budget", Nov 19): internal RAM went to statics, task stacks and Wi-Fi buffers.
+# .bss of lwip, net80211, pp, wpa_supplicant and bt in PSRAM (IDF does these itself); main/linker.lf adds the app's
+# own statics and mDNS's.
+CONFIG_SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY=y
+# 16 static TX buffers (1.7 KB each, internal DMA) were far more than the 4-segment TCP send window ever fills;
+# overflow packets queue in the PSRAM cache-TX list.
+CONFIG_ESP_WIFI_STATIC_TX_BUFFER_NUM=8
+# mDNS task stack and its allocations in PSRAM
+CONFIG_MDNS_TASK_CREATE_FROM_SPIRAM=y
+CONFIG_MDNS_MEMORY_ALLOC_SPIRAM=y
+# sys_evt runs the Wi-Fi/IP handlers (on_net_up starts httpd): 108 bytes of 2816 were left
+CONFIG_ESP_SYSTEM_EVENT_TASK_STACK_SIZE=4096
