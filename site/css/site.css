@@ -195,7 +195,7 @@ h3 { font: 600 1.0625rem/1.35 var(--f-body); color: var(--ink); }
 @media (min-width: 960px) {
   .day__grid { grid-template-columns: minmax(380px, 1fr) 1fr; gap: 64px; }
   .day__stage { display: block; position: sticky; top: calc(var(--nav-h) + 6vh); align-self: start; width: min(100%, 520px); aspect-ratio: 1; justify-self: center; }
-  .device--stage { position: absolute; inset: 9%; width: auto; }
+  .device--stage { position: absolute; left: 50%; top: 50%; width: 82%; transform: translate(-50%, -50%); } /* centred explicitly: Safari and Chrome disagree on absolute boxes sized by inset plus aspect-ratio */
   .device--stage .day__shot { position: absolute; inset: var(--bezel); width: calc(100% - 2 * var(--bezel)); height: auto; aspect-ratio: 1 / 1; opacity: 0; transition: opacity .5s var(--ease); }
   .device--stage .day__shot.is-active { opacity: 1; }
   .device--stage { background-clip: padding-box; }
