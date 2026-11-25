@@ -47,7 +47,7 @@
 #define MENU_AFTER_LONG_MS 500     /* long-press IRQ at 2.5 s + 0.5 s = the spec's 3 s hold */
 #define BOOT_GPIO       GPIO_NUM_0
 #define BOOT_HOLD_MS    400        /* press and hold = push-to-talk */
-#define CHORD_MS        150        /* BOOT + PWR pressed within this of each other = screenshot */
+#define CHORD_MS        400       /* BOOT + PWR pressed within this of each other = screenshot */
 #define BOOT_DOUBLE_MS  300        /* window for the second press of a double-press */
 
 #define POLL_MS         200
