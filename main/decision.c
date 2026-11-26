@@ -147,6 +147,8 @@ static int s_needs_shown;        /* the NEEDS YOU count the Now face last drew f
 static bool inform_stage(const dec_t *d) { return is_reply(d) && d->weight == W_NOTICE && strcmp(d->id, s_reply_opened); }
 /* Drawn and handled as the Reply view (every reply item except one still at the Inform stage). */
 static bool reply_view(const dec_t *d) { return is_reply(d) && !inform_stage(d); }
+/* An E89 notification with no question attached: acking it is how he ends it. */
+static bool plain_notice(const dec_t *d) { return d->src == SRC_NOTICES && !is_reply(d); }
 
 /* ---- text ---- */
 
@@ -652,7 +654,7 @@ static void action_row(const char **labels, const int *tags, const bool *holds, 
     lv_obj_set_style_radius(cap, LV_RADIUS_CIRCLE, 0);
     lv_obj_set_style_clip_corner(cap, true, 0);
     lv_obj_set_style_border_width(cap, 2, 0);
-    lv_obj_set_style_border_color(cap, lv_color_hex(COL_HAIR), 0);
+    lv_obj_set_style_border_color(cap, lv_color_hex(flood ? COL_ROSE_INK : COL_HAIR), 0);
     lv_obj_set_style_border_post(cap, true, 0);
     lv_obj_remove_flag(cap, LV_OBJ_FLAG_SCROLLABLE);
     int lw[3], sum = 0;
@@ -666,9 +668,9 @@ static void action_row(const char **labels, const int *tags, const bool *holds, 
         lv_obj_set_size(seg, w, 60);
         lv_obj_remove_flag(seg, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_add_flag(seg, LV_OBJ_FLAG_CLICKABLE);
-        uint32_t ink = i == 0 && !holds[i] ? COL_PERI_INK : COL_INK;
+        uint32_t ink = i == 0 && !holds[i] ? (flood ? COL_ROSE : COL_PERI_INK) : (flood ? COL_ROSE_INK : COL_INK);
         if (i == 0 && !holds[i]) {
-            lv_obj_set_style_bg_color(seg, lv_color_hex(COL_PERI), 0);
+            lv_obj_set_style_bg_color(seg, lv_color_hex(flood ? COL_ROSE_INK : COL_PERI), 0);
             lv_obj_set_style_bg_opa(seg, LV_OPA_COVER, 0);
         }
         if (!holds[i]) {
@@ -678,7 +680,7 @@ static void action_row(const char **labels, const int *tags, const bool *holds, 
         if (i > 0) {                                            /* divider */
             lv_obj_set_style_border_side(seg, LV_BORDER_SIDE_LEFT, 0);
             lv_obj_set_style_border_width(seg, 2, 0);
-            lv_obj_set_style_border_color(seg, lv_color_hex(COL_HAIR), 0);
+            lv_obj_set_style_border_color(seg, lv_color_hex(flood ? COL_ROSE_INK : COL_HAIR), 0);
         }
         lv_obj_t *l = lv_label_create(seg);
         lv_label_set_text(l, labels[i]);
@@ -762,7 +764,9 @@ static void build_decision(const dec_t *d)
     } else {
         for (int i = 0; i < d->nact && n < 2; i++) { labels[n] = d->act[i].label; tags[n] = T_ACT + i; holds[n++] = d->act[i].hold; }
     }
-    labels[n] = "LATER"; tags[n] = T_LATER; holds[n++] = false;
+    /* A notification with nothing to answer must be endable from here: GOT IT acks it, LATER only sets it aside. */
+    if (plain_notice(d)) { labels[n] = "GOT IT"; tags[n] = T_GOTIT; holds[n++] = false; }
+    if (n < 3) { labels[n] = "LATER"; tags[n] = T_LATER; holds[n++] = false; }
     action_row(labels, tags, holds, n, false);
     more_line(COL_INK2);
 }
@@ -787,13 +791,14 @@ static void build_urgent(const dec_t *d)
     if (d->line[0]) text(d->line, f_whisper, COL_ROSE_INK, 48, 252, 370, 0, 1, 1);
     if (d->consequence[0]) text(d->consequence, f_bold14, COL_ROSE_INK, 48, 274, 370, 0, 1, 1);
 
-    const char *labels[2]; int tags[2]; bool holds[2]; int n = 0;
+    const char *labels[3]; int tags[3]; bool holds[3]; int n = 0;
     if (d->approval || has_draft(d)) {
         labels[n] = "REVIEW"; tags[n] = T_REVIEW; holds[n++] = false;
     } else {
         for (int i = 0; i < d->nact && n < 2; i++) { labels[n] = d->act[i].label; tags[n] = T_ACT + i; holds[n++] = d->act[i].hold; }
     }
-    if (n < 2) { labels[n] = "DISMISS"; tags[n] = T_LATER; holds[n++] = false; }
+    if (plain_notice(d)) { labels[n] = "GOT IT"; tags[n] = T_GOTIT; holds[n++] = false; }
+    else if (n < 2) { labels[n] = "DISMISS"; tags[n] = T_LATER; holds[n++] = false; }
     action_row(labels, tags, holds, n, true);
     more_line(COL_ROSE_INK);
 }
